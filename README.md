@@ -1,30 +1,22 @@
 ## 快速啟動 Omnivoice
 
-1. 建立環境:
+1. 使用Docker建立環境:
    ```bash
-   conda create -n omnivoice python=3.10
-   conda activate omnivoice
+   docker build -t omnivoice_api .
    ```
 
-2. 安裝omnivoice
+2. 啟動 API:
     ```bash
-   pip install omnivoice
-   ```
-
-3. 安裝依賴:
-    ```bash
-    # 建議先安裝對應顯卡的 PyTorch，例如:
-    pip install torch==2.8.0+cu128 torchaudio==2.8.0+cu128 --extra-index-url https://download.pytorch.org/whl/cu128
-    # 安裝其餘依賴
-    pip install -r requirements.txt
+    docker run --rm —gpus all -d -p 10003:8000 --name tts_test omnivoice_api
     ```
 
-4. 啟動 API:
-    ```bash
-    python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-    ```
+    啟動後請訪問：http://<伺服器網址>:10003/docs 進入 Swagger UI 進行測試。
 
-    啟動後請訪問：http://localhost:8000/docs 進入 Swagger UI 進行測試。
+3. 關閉 API:
+    ```bash
+    docker stop tts_test 
+    docker rm tts_test
+    ```
 
 ## 使用說明
 
