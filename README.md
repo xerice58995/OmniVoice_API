@@ -7,7 +7,11 @@
 
 2. 啟動 API:
     ```bash
-    docker run --rm —gpus all -d -p 10003:8000 --name tts_test omnivoice_api
+    docker run --rm --gpus all -d \
+      -p 10003:8000 \
+      --name tts_test \
+      -v /伺服器路徑/OmniVoice_API/model_weights:/app/model_weights \
+      omnivoice_api
     ```
 
     啟動後請訪問：http://<伺服器網址>:10003/docs 進入 Swagger UI 進行測試。
