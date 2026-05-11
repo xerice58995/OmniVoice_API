@@ -13,7 +13,7 @@ class OmniVoiceEngine:
         self.model = OmniVoice.from_pretrained(
             "k2-fsa/OmniVoice",
             device_map="cuda:0",
-            cache_dir="./model_weights",
+            cache_dir="../model_weights",
             dtype=torch.float16,
         )
         print(f"模型已成功載入至設備")
