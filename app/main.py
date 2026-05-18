@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import gc
 import io
 import os
@@ -5,6 +6,20 @@ import tempfile
 import uuid
 from contextlib import asynccontextmanager
 from typing import Optional
+=======
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import Response
+from fastapi.responses import StreamingResponse, FileResponse
+from app.core import OmniVoiceEngine
+from contextlib import asynccontextmanager
+from typing import Optional
+import io, os, uuid, soundfile as sf
+import torch
+import gc
+import numpy as np
+import tempfile
+
+>>>>>>> 318c80a (bug fixed.)
 
 import numpy as np
 import soundfile as sf
@@ -50,14 +65,22 @@ async def voice_design(
     text: str = Form(
         ...,
         description="【必填】想要模型說出的文字內容，使用簡體中文以避免發音錯誤。",
+<<<<<<< HEAD
         examples=[
             "你好，我是一位虚拟助理，今天很高兴能够有这个机会认识各位，并和各位介绍功能。"
         ],
+=======
+        examples=["你好，我是一位虚拟助理，今天很高兴能够有这个机会认识各位，并和各位介绍功能。"]
+>>>>>>> 318c80a (bug fixed.)
     ),
     instruct: Optional[str] = Form(
         None,
         description="【選填】希望的語調、性別等等，可留白。",
+<<<<<<< HEAD
         examples=["女，青年，高音调"],
+=======
+        examples=["女，青年，高音调"]
+>>>>>>> 318c80a (bug fixed.)
     ),
 ):
     wav, sr = engine.generate(
@@ -80,9 +103,13 @@ async def voice_cloning(
     text: str = Form(
         ...,
         description="【必填】想要模型說出的文字內容，使用簡體中文以避免發音錯誤。",
+<<<<<<< HEAD
         examples=[
             "你好，我是一位虚拟助理，今天很高兴能够有这个机会认识各位，并和各位介绍功能。"
         ],
+=======
+        examples=["你好，我是一位虚拟助理，今天很高兴能够有这个机会认识各位，并和各位介绍功能。"]
+>>>>>>> 318c80a (bug fixed.)
     ),
     ref_audio: UploadFile = File(
         ...,
@@ -91,8 +118,13 @@ async def voice_cloning(
     ref_text: Optional[str] = Form(
         None,
         description="【選填】上傳音檔的文字稿，可留白。",
+<<<<<<< HEAD
         examples=["【選填】上傳音檔的文字稿。"],
     ),
+=======
+        examples=["【選填】上傳音檔的文字稿。",]
+    )
+>>>>>>> 318c80a (bug fixed.)
 ):
     ref_path = await save_temp_file(ref_audio)
 
@@ -113,6 +145,15 @@ async def voice_cloning(
             print(f"已清理暫存檔: {ref_path}")
 
 
+<<<<<<< HEAD
+=======
+
+
+# -------------------------
+# 工具函數
+# -------------------------
+
+>>>>>>> 318c80a (bug fixed.)
 async def save_temp_file(upload_file: UploadFile):
     ext = os.path.splitext(upload_file.filename)[1]
     tmp_path = f"temp_{uuid.uuid4()}{ext}"
@@ -122,6 +163,7 @@ async def save_temp_file(upload_file: UploadFile):
 
 
 def wav_to_stream(wav, sr):
+<<<<<<< HEAD
     # 如果 wav 是 [[...]] 這種格式，我們需要取出裡面的內容
     while (
         isinstance(wav, list)
@@ -142,6 +184,18 @@ def wav_to_stream(wav, sr):
     wav = wav.astype(np.float32).flatten()
 
     print(f"DEBUG: 最終音訊採樣數: {len(wav)}")
+=======
+    # 1. 處理 OmniVoice 的 Tensor 輸出
+    if hasattr(wav, 'cpu'):
+        # 加入 .detach() 避免 PyTorch 梯度追蹤報錯
+        wav = wav.detach().cpu().numpy()
+    elif isinstance(wav, list):
+        wav = np.array(wav)
+
+    wav = wav.astype(np.float32).flatten()
+
+    print(f"DEBUG: OmniVoice 最終音訊採樣數: {len(wav)}")
+>>>>>>> 318c80a (bug fixed.)
 
     # 數據正規化與防爆音
     if np.abs(wav).max() > 0:
@@ -150,8 +204,17 @@ def wav_to_stream(wav, sr):
     # 存成實體暫存檔 (Swagger UI 顯示 Bug )
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
 
+<<<<<<< HEAD
     sf.write(temp_file.name, wav, sr if sr else 24000, format="WAV", subtype="PCM_16")
 
     return FileResponse(
         path=temp_file.name, media_type="audio/wav", filename="vox_gen.wav"
+=======
+    sf.write(temp_file.name, wav, sr if sr else 24000, format='WAV', subtype='PCM_16')
+
+    return FileResponse(
+        path=temp_file.name,
+        media_type="audio/wav",
+        filename="omnivoice_gen.wav"
+>>>>>>> 318c80a (bug fixed.)
     )

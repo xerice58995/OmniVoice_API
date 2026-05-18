@@ -1,28 +1,54 @@
 ## 快速啟動 Omnivoice
 
-1. 使用Docker建立環境:
+1. 建立環境:
    ```bash
-   docker build -t omnivoice_api .
+   conda create -n omnivoice python=3.10
+   conda activate omnivoice
    ```
 
-2. 啟動 API:
+2. 安裝omnivoice
     ```bash
-    docker run --rm --gpus all -d \
-      -p 10003:8000 \
-      --name tts_test \
-      -v /伺服器路徑/OmniVoice_API/model_weights:/app/model_weights \
-      omnivoice_api
+   pip install omnivoice
+   ```
+
+3. 安裝依賴:
+    ```bash
+    # 建議先安裝對應顯卡的 PyTorch，例如:
+    pip install torch==2.8.0+cu128 torchaudio==2.8.0+cu128 --extra-index-url https://download.pytorch.org/whl/cu128
+    # 安裝其餘依賴
+    pip install -r requirements.txt
     ```
 
-    啟動後請訪問：http://<伺服器網址>:10003/docs 進入 Swagger UI 進行測試。
-
-3. 關閉 API:
+4. 啟動 API:
     ```bash
-    docker stop tts_test 
-    docker rm tts_test
+    python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     ```
+
+    啟動後請訪問：http://localhost:8000/docs 進入 Swagger UI 進行測試。
 
 ## 使用說明
+
+### (5/18) 更新符合公司規定的API規格
+
+API端點```/tts```已根據要求將參數做以下設置：
+```
+    - content_to_synthesize: 要合成的文字內容
+    - speaker_prompt_audio: 參考音檔
+    - speaker_prompt_text_transcription: 參考音檔的文字稿
+```
+
+curl 命令方式：
+```curl
+# 預設方法
+curl -X POST "http://localhost:8000/tts" \
+  -F "content_to_synthesize=你好呀，今天天氣如何？" \
+  -F "speaker_prompt_audio=@reference.wav" \
+  -F "speaker_prompt_text_transcription=欲合成音訊檔的原始文字稿" \
+  --output output_anime.wav
+```curl
+
+--------------------------------------------------------------------------------
+### 原始版本說明：
 
 OmniVoice的優勢為生成速度，據稱RTF as low as 0.025 (40x faster than real-time)。
 
