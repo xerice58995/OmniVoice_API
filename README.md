@@ -38,7 +38,7 @@ API端點```/tts```已根據要求將參數做以下設置：
 ```
 
 curl 命令方式：
-```curl
+
 # 預設方法
 curl -X POST "http://localhost:8000/tts" \
   -F "content_to_synthesize=你好呀，今天天氣如何？" \
